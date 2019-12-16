@@ -72,8 +72,6 @@ def get_list():
         parsed_list.append({
             'name': a.get_text(strip=True),
             'href': a.get('href'),
-            'status': 'not_loaded',
-            'valid': False,
             'links': [
                 {
                     'name': 'ICOBench',
@@ -120,8 +118,6 @@ def get_one(ieo):
         })
 
     ieo['links'] = links
-    ieo['valid'] = True
-    ieo['status'] = 'success_socials_loaded'
 
     print(f'Получил данные по проекту', name_ieo)
     return {

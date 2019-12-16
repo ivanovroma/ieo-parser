@@ -36,7 +36,6 @@ def loop():
                 set_timer(120)
                 return
 
-            new_ieo['status'] = message
             db.write_one(new_ieo)
             continue
 
