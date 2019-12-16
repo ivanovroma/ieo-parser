@@ -38,6 +38,17 @@ def loop():
         print(f'Добавил в db {str(len(new_ieo_list))} проектов')
         good_bay()
 
+def set_timer(timer, hours=0, minutes=0):
+    if (hours and minutes):
+        print(f'Следующая проверка через {hours}ч. {minutes}м.')
+    else:
+        print(f'Отложим на {timer} секунд')
+        
+    time.sleep(timer)
+
+    print('Пробуем снова')
+    loop()
+
 def good_bay():
     now = datetime.datetime.now()
     tomorrow = datetime.date.today() + datetime.timedelta(days=1)
@@ -50,17 +61,6 @@ def good_bay():
     minutes = (seconds % 3600) // 60
 
     set_timer(seconds, hours, minutes)
-
-def set_timer(timer, hours=0, minutes=0):
-    if (hours and minutes):
-        print(f'Следующая проверка через {hours}ч. {minutes}м.')
-    else:
-        print(f'Отложим на {timer} секунд')
-        
-    time.sleep(timer)
-
-    print('Пробуем снова')
-    loop()
 
 if __name__ == '__main__':
     loop()
