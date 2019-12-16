@@ -16,9 +16,10 @@ def loop():
     
     # Получаем список IEO из db
     saved_list = db.get_list()
+    parsed_list = parsed_list['list']
 
     # Проверяем наличие новых IEO
-    new_ieo_list = helper.compare_lists(saved_list, parsed_list['list'])
+    new_ieo_list = helper.compare_lists(saved_list, parsed_list)
 
     # Для каждого нового IEO парсим социалки
     for new_ieo in new_ieo_list:
