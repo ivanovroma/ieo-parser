@@ -26,7 +26,7 @@ def loop():
     for new_ieo in new_ieo_list:
         parsed_ieo = parser.get_one(new_ieo)
 
-        # Если что то пошло не так, помечаем IEO как не валидный
+        # Если что то пошло не так, то добавим ieo без ссылок
         success = parsed_ieo['success']
         if not success:
             message = parsed_ieo['message']
@@ -46,7 +46,7 @@ def loop():
         good_bay()
 
 def set_timer(timer, hours=0, minutes=0):
-    if (hours and minutes):
+    if hours and minutes:
         print(f'Следующая проверка через {hours}ч. {minutes}м.')
     else:
         print(f'Следующая проверка через {timer}c.')
