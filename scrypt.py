@@ -4,30 +4,6 @@ import helper
 import datetime
 import time
 
-def good_bay():
-    now = datetime.datetime.now()
-    tomorrow = datetime.date.today() + datetime.timedelta(days=1)
-    
-    wake_up_time = datetime.datetime(tomorrow.year, tomorrow.month, tomorrow.day, 0, 0)
-
-    delta = wake_up_time - now
-    seconds = delta.seconds
-    hours = seconds // 3600
-    minutes = (seconds % 3600) // 60
-
-    set_timer(seconds, hours, minutes)
-
-def set_timer(timer, hours=0, minutes=0):
-    if (hours and minutes):
-        print(f'Следующая проверка через {hours}ч. {minutes}м.')
-    else:
-        print(f'Отложим на {timer} секунд')
-        
-    time.sleep(timer)
-
-    print('Пробуем снова')
-    loop()
-
 def loop():
     # Получаем список IEO с сайта
     parsed_list = parser.get_list()
@@ -60,6 +36,30 @@ def loop():
     else:
         print(f'Добавил в db {str(len(new_ieo_list))} проектов')
         good_bay()
+
+def good_bay():
+    now = datetime.datetime.now()
+    tomorrow = datetime.date.today() + datetime.timedelta(days=1)
+    
+    wake_up_time = datetime.datetime(tomorrow.year, tomorrow.month, tomorrow.day, 0, 0)
+
+    delta = wake_up_time - now
+    seconds = delta.seconds
+    hours = seconds // 3600
+    minutes = (seconds % 3600) // 60
+
+    set_timer(seconds, hours, minutes)
+
+def set_timer(timer, hours=0, minutes=0):
+    if (hours and minutes):
+        print(f'Следующая проверка через {hours}ч. {minutes}м.')
+    else:
+        print(f'Отложим на {timer} секунд')
+        
+    time.sleep(timer)
+
+    print('Пробуем снова')
+    loop()
 
 if __name__ == '__main__':
     loop()
