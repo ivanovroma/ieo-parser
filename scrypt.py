@@ -8,7 +8,7 @@ def loop():
     # Получаем список IEO с сайта
     parsed_list = parser.get_list()
     
-    # Если что то пошло не так, повторим попытку через 10 минут
+    # Если что то пошло не так, повторим попытку через 120 секунд
     success = parsed_list['success']
     if not success:
         set_timer(120)
