@@ -1,3 +1,5 @@
+Скрипт при запуске проверяет наличие новых проектов и выставляет таймер следующей проверки на завтра в 00:00 
+
 ## Setup ##
 ```bash
 git clone http://github.com/ivanovroma/ieo-parser ieo-parser
