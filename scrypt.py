@@ -50,7 +50,7 @@ def set_timer(timer, hours=0, minutes=0):
     if (hours and minutes):
         print(f'Следующая проверка через {hours}ч. {minutes}м.')
     else:
-        print(f'Отложим на {timer} секунд')
+        print(f'Следующая проверка через {timer}c.')
 
     time.sleep(timer)
 
