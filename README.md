@@ -10,5 +10,5 @@ pip3 install -r requirements.txt
 
 ## Run ##
 ```bash
-python3 scrypt.py
+python3 script.py
 ```
