@@ -57,8 +57,7 @@ def set_timer(timer):
 
     time.sleep(timer)
 
-    print('\n-------------')
-    print('Пробуем снова')
+    print('\n-------------\nПробуем снова')
     loop()
     return
 
