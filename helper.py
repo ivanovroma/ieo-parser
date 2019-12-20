@@ -20,5 +20,5 @@ def compare_lists(saved_list, parsed_list):
         else:
             new_ieo_list.append(parsed_ieo)
 
-    print(f'Обнаружено {str(len(new_ieo_list))} новых IEO')
+    print(f'Обнаружено {str(len(parsed_list))} IEO, новых {str(len(new_ieo_list))}\n')
     return new_ieo_list

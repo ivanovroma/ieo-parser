@@ -4,7 +4,6 @@ import requests
 def get_html(route):
     base_url = 'https://icobench.com'
     url = base_url + route
-    print(f'Загружаю страницу - {url}')
 
     try:
         response = {
@@ -25,7 +24,6 @@ def get_html(route):
     body = response['body']
     soup = BeautifulSoup(body.text, 'html.parser')
 
-    print(f'Успешно загрузил страницу - {url}')
     return {
         'success': True,
         'soup': soup
@@ -79,8 +77,6 @@ def get_list():
                 }
             ]
         })
-
-    print(f'На странице обнаружено {str(len(parsed_list))} IEO')
 
     return {
         'success': True,
