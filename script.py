@@ -3,23 +3,31 @@ import db
 import helper
 import datetime
 import time
+import logging
+ 
 
 def loop():
     # Получаем список IEO с сайта
-    parsed_list = parser.get_list()
+    parsed = parser.get_list()
     
     # Если что то пошло не так, повторим попытку через 120 секунд
-    success = parsed_list['success']
+    success = parsed['success']
     if not success:
-        set_timer(120)
-        return
-    parsed_list = parsed_list['list']
+        return parsed
+    
+    parsed_list = parsed['list']
     
     # Получаем список IEO из db
     saved_list = db.get_list()
 
     # Проверяем наличие новых IEO
     new_ieo_list = helper.compare_lists(saved_list, parsed_list)
+
+    error = {
+        'success': False,
+        'message': '',
+        'subject': ''
+    }
 
     # Для каждого нового IEO парсим социалки
     for new_ieo in new_ieo_list:
@@ -28,12 +36,16 @@ def loop():
         # Если что то пошло не так, то добавим ieo без ссылок
         success = parsed_ieo['success']
         if not success:
-            message = parsed_ieo['message']
+            message = parsed_ieo.get('message')
+            subject = parsed_ieo.get('subject')
+
+            logging.warning(f'{message} - {subject}')
 
             # Если не удалось загрузить страницу, повторим попытку через 120 секунд
             if (message == 'get_html_fail'):
-                set_timer(120)
-                return
+                error['message'] = message
+                error['subject'] = subject
+                break
 
             db.write_one(new_ieo)
             continue
@@ -45,31 +57,48 @@ def loop():
 
         if added:
             print(f'Добавил в db {str(len(new_ieo_list))} проектов')
-        
-        good_bay()
 
-def set_timer(timer):
+        return {'success': True}
+
+    return error
+
+def getNextCheckTime():
+    now = datetime.datetime.now()
+    tomorrow = datetime.date.today() + datetime.timedelta(days=1)
+    wake_up_time = datetime.datetime(tomorrow.year, tomorrow.month, tomorrow.day, 0, 0)
+    delta = wake_up_time - now
+
+    timer = delta.seconds
+
     hours = timer // 3600
     minutes = (timer % 3600) // 60
     seconds = timer - (hours * 3600) - (minutes * 60)
 
     print(f'Следующая проверка через {hours}ч. {minutes}м. {seconds}с.')
 
-    time.sleep(timer)
-
-    print('\n-------------\nПробуем снова')
-    loop()
-    return
-
-def good_bay():
-    now = datetime.datetime.now()
-    tomorrow = datetime.date.today() + datetime.timedelta(days=1)
-    
-    wake_up_time = datetime.datetime(tomorrow.year, tomorrow.month, tomorrow.day, 0, 0)
-
-    delta = wake_up_time - now
-
-    set_timer(delta.seconds)
+    return timer
 
 if __name__ == '__main__':
-    loop()
+    logging.basicConfig(filename='warnings.log', filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+
+    while True:
+        try:
+            result = loop()
+
+            success = result.get('success')
+            if success:
+                print('Проверка прошла успешно.')
+                timer = getNextCheckTime()
+                
+                time.sleep(timer)
+            else:
+                minuts = 2
+                message = result.get('message')
+                
+                logging.warning(f'{message}')
+                print(f'Что-то пошло не так, следущая попытка через {minuts}м.')
+                
+                time.sleep(minuts * 60)
+        except KeyboardInterrupt:
+            print('\nПока!')
+            break

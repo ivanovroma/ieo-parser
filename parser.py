@@ -13,7 +13,8 @@ def get_html(route):
     except:
         response = {
             'success': False,
-            'message': 'get_html_fail'
+            'message': 'get_html_fail',
+            'subject': url
         }
 
     success = response['success']
@@ -39,14 +40,22 @@ def get_list():
         return response
 
     soup = response['soup']
+
+    ieocols = soup.find(id='ieocols')
+    if not ieocols:
+        print('#ieocols не найден')
+        return {
+            'success': False,
+            'message': 'ieocols_not_found',
+        }
     
-    table = soup.find(id='ieocols').find('table')
+    table = ieocols.find('table')
 
     if not table:
         print('На полученной странице таблица не найдена')
         return {
             'success': False,
-            'message': 'table_not_found'
+            'message': 'table_not_found',
         }
 
     trs = table.find_all('tr')
@@ -101,7 +110,8 @@ def get_one(ieo):
         print('Не найдена информация о социальных сетях на странице')
         return {
             'success': False,
-            'message': 'socials_not_found'
+            'message': 'socials_not_found',
+            'subject': href_ieo
         }
 
     a_list = socials.find_all('a')
@@ -115,7 +125,6 @@ def get_one(ieo):
 
     ieo['links'] = links
 
-    print(f'Получил данные по проекту', name_ieo)
     return {
         'success': True,
         'ieo': ieo
