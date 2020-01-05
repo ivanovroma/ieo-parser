@@ -8,7 +8,7 @@ import helpers
 def loop():
     logger.start()
 
-
+    # Сначала попробуем загрузить данные по тем проектам, которые до этого не удалось загрузить
     not_success_list = db.get_not_success()
 
     logger.recheck(not_success_list)
