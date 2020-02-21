@@ -1,6 +1,9 @@
 from bs4 import BeautifulSoup
 import requests
 from Logger import Logger
+import time
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 
 logger = Logger()
 
@@ -11,29 +14,76 @@ class Parser:
     def __get_html(self, route):
         url = self.__base_url + route
 
+        simple_response = self.__simple_request(url)
+        
+        if not simple_response['success']:
+            return simple_response
+        
+        protected = self.__check_protection(simple_response['soup']) 
+        
+        if not protected:
+            return simple_response
+
+        return self.__selenium_request(url)
+
+    def __simple_request(self, url):
+        print('simple_request')
+        
         try:
-            response = {
+            body = requests.get(url)
+            soup = BeautifulSoup(body.text, 'html.parser')
+            
+            return {
                 'success': True,
-                'body': requests.get(url)
+                'soup': soup
             }
         except:
-            response = {
+            return {
                 'success': False,
-                'message': 'get_html_fail',
-                'subject': url
+                'message': 'simple_request_fail',
+                'url': url
             }
 
-        success = response['success']
-        if not success:
-            return response
+    def __check_protection(self, soup):
+        is_cloudflare = bool(soup.find_all(text='DDoS protection by Cloudflare'))
 
-        body = response['body']
-        soup = BeautifulSoup(body.text, 'html.parser')
+        return is_cloudflare
 
-        return {
-            'success': True,
-            'soup': soup
-        }
+    def __selenium_request(self, url):
+        print('selenium_request')
+
+        def wait():
+            result_soup = {}
+            i = 1
+            while True:
+                print(i)
+                time.sleep(7 if i == 1 else 2)
+                body = browser.page_source
+                soup = BeautifulSoup(body, 'html.parser')
+
+                protection = self.__check_protection(soup)
+
+                if not protection:
+                    result_soup = soup
+                    break
+
+                i += 1
+            
+            return {
+                'success': True,
+                'soup': result_soup
+            }
+
+        options = Options()
+        options.headless = True
+        browser = webdriver.Firefox(options=options)
+        browser.get(url)
+
+        result = wait()
+
+        browser.close()
+        
+        return result
 
     def get_list(self):
         response = self.__get_html('/ieo')
