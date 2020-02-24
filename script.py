@@ -27,6 +27,7 @@ def loop():
 
 
     # Получаем список IEO с сайта
+    logger.info('Получаю актуальный список IEO')
     parsed = parser.get_list()
     
     success = parsed['success']
@@ -34,8 +35,8 @@ def loop():
         logger.warning('Не удалось загрузить список', parsed)
         return {'success': False}
 
-    logger.info('Получен актуальный список IEO')
     parsed_list = parsed['list']
+    logger.info(f'Получен актуальный список из {len(parsed_list)} IEO')
     
 
     # Получаем список IEO из db
@@ -46,6 +47,7 @@ def loop():
 
 
     # Для каждого нового IEO парсим данные
+    logger.info(f'Обнаружено {len(new_list)} новых IEO, получаю данные по ним')
     parsed_every = parser.get_every(new_list)
     
     # Если что то пошло не так, повторим попытку позже

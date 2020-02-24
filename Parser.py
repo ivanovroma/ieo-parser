@@ -27,8 +27,6 @@ class Parser:
         return self.__selenium_request(url)
 
     def __simple_request(self, url):
-        print('simple_request')
-        
         try:
             body = requests.get(url)
             soup = BeautifulSoup(body.text, 'html.parser')
@@ -50,20 +48,17 @@ class Parser:
         return is_cloudflare
 
     def __selenium_request(self, url):
-        print('selenium_request')
-
         def wait():
             result_soup = {}
             i = 1
             while True:
-                print(i)
                 time.sleep(7 if i == 1 else 2)
                 body = browser.page_source
                 soup = BeautifulSoup(body, 'html.parser')
 
-                protection = self.__check_protection(soup)
+                protected = self.__check_protection(soup)
 
-                if not protection:
+                if not protected:
                     result_soup = soup
                     break
 
@@ -76,7 +71,7 @@ class Parser:
 
         options = Options()
         options.headless = True
-        browser = webdriver.Firefox(options=options)
+        browser = webdriver.Firefox(options=options, log_path='./logs/geckodriver.log')
         browser.get(url)
 
         result = wait()

@@ -37,7 +37,7 @@ class Logger:
         print(text)
 
     def update(self, updated_list):
-        text = f'Полученны валидные данные по {len(updated_list)} ieo'
+        text = f'Обновлены данные по {len(updated_list)} ieo'
 
         logging.info(text)
         print(text)
